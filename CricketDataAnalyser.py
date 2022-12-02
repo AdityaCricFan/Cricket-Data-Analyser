@@ -7,7 +7,7 @@ from pandastable import Table, TableModel
 import pygame
 import mysql.connector as c
 
-con = c.connect(host = "localhost", user = "root", passwd = "", database = "seriesstatistics")
+con = c.connect(host = "localhost", user = "root", passwd = "Aditya2003$", database = "seriesstatistics")
 cursor = con.cursor()
 query = "select * from data"
 cursor.execute(query)
@@ -132,42 +132,56 @@ def get_Pie_Chart_B():
     canvas2.get_tk_widget().pack(side=TOP, fill=BOTH)
 
 def getResult():
-    tAdata = [tAOver1.get(), tAOver2.get(), tAOver3.get(), tAOver4.get(), tAOver5.get(), tAOver6.get(), tAOver7.get(),
-              tAOver8.get(), tAOver9.get(), tAOver10.get()]
-    tATotal.set(sum(tAdata))
-    tBdata = [tBOver1.get(), tBOver2.get(), tBOver3.get(), tBOver4.get(), tBOver5.get(), tBOver6.get(), tBOver7.get(),
-              tBOver8.get(), tBOver9.get(), tBOver10.get()]
-    tBTotal.set(sum(tBdata))
-    if sum(tAdata) > sum(tBdata):
-        winner.set("Team A");
-    elif sum(tBdata) > sum(tAdata):
-        winner.set("Team B");
-    else:
-        winner.set("Tie")
-    w = winner.get()
-    a = tATotal.get()
-    b = tBTotal.get()
+    try:
+        tAdata = [tAOver1.get(), tAOver2.get(), tAOver3.get(), tAOver4.get(), tAOver5.get(), tAOver6.get(), tAOver7.get(),
+                  tAOver8.get(), tAOver9.get(), tAOver10.get()]
+        tATotal.set(sum(tAdata))
+        tBdata = [tBOver1.get(), tBOver2.get(), tBOver3.get(), tBOver4.get(), tBOver5.get(), tBOver6.get(), tBOver7.get(),
+                  tBOver8.get(), tBOver9.get(), tBOver10.get()]
+        tBTotal.set(sum(tBdata))
+        if sum(tAdata) > sum(tBdata):
+            winner.set("Team A");
+        elif sum(tBdata) > sum(tAdata):
+            winner.set("Team B");
+        else:
+            winner.set("Tie")
+        w = winner.get()
+        a = tATotal.get()
+        b = tBTotal.get()
 
-    global cursor
-    global data
-    query = "Insert into data values ('{}', {}, {})".format(w, a, b)
+        global cursor
+        global data
+        query = "Insert into data values ('{}', {}, {})".format(w, a, b)
+        cursor.execute(query)
+        con.commit()
+
+        cursor = con.cursor()
+        query = "select * from data"
+        cursor.execute(query)
+        data = cursor.fetchall()
+
+        countA, countB = 0, 0
+        for stat in data:
+            if 'Team A' in stat:
+                countA += 1
+            elif 'Team B' in stat:
+                countB += 1
+        SA1_lbl['text'] = countA
+        SB1_lbl['text'] = countB
+    except:
+        winner.set("Invalid Input")
+        tAOver1.set(0), tAOver2.set(0), tAOver3.set(0), tAOver4.set(0), tAOver5.set(0), tAOver6.set(0), tAOver7.set(0),
+        tAOver8.set(0), tAOver9.set(0), tAOver10.set(0)
+        tBOver1.set(0), tBOver2.set(0), tBOver3.set(0), tBOver4.set(0), tBOver5.set(0), tBOver6.set(0), tBOver7.set(0),
+        tBOver8.set(0), tBOver9.set(0), tBOver10.set(0)
+
+def clear():
+    cursor = con.cursor()
+    query = "TRUNCATE TABLE data"
     cursor.execute(query)
     con.commit()
-
-    cursor = con.cursor()
-    query = "select * from data"
-    cursor.execute(query)
-    data = cursor.fetchall()
-
-    countA, countB = 0, 0
-    for stat in data:
-        if 'Team A' in stat:
-            countA += 1
-        elif 'Team B' in stat:
-            countB += 1
-    SA1_lbl['text'] = countA
-    SB1_lbl['text'] = countB
-
+    SA1_lbl['text'] = 0
+    SB1_lbl['text'] = 0
 
 F2 = LabelFrame(root, text="Runs Scored Per Over", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F2.place(x=0, y=54, width=380, height=380)
@@ -251,6 +265,9 @@ B6 = Button(F5, text = "Pie Chart A", command = get_Pie_Chart_A)
 B6.grid(row = 3, column = 0, padx = 5, pady = 5)
 B7 = Button(F5, text = "Pie Chart B", command = get_Pie_Chart_B)
 B7.grid(row = 4, column = 0, padx = 5, pady = 5)
+B8 = Button(F5, text = "Clear Series Data", command = clear)
+B8.grid(row = 5, column = 0, padx = 5, pady = 5)
+
 
 F6 = LabelFrame(root, text="Series Statistics", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F6.place(x=451, y=435, width=300, height=300)
