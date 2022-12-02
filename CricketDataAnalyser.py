@@ -5,6 +5,20 @@ import pandas as pd
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from pandastable import Table, TableModel
 import pygame
+import mysql.connector as c
+
+con = c.connect(host = "localhost", user = "root", passwd = "Aditya2003$", database = "seriesstatistics")
+cursor = con.cursor()
+query = "select * from data"
+cursor.execute(query)
+data = cursor.fetchall()
+
+countA, countB = 0, 0
+for stat in data:
+    if 'Team A' in stat:
+        countA += 1
+    elif 'Team B' in stat:
+        countB += 1
 
 pygame.mixer.init()
 pygame.mixer.music.load("Ipl Scorecard Bgm.mp3")
@@ -97,7 +111,6 @@ def get_Pie_Chart_A():
     #toolbar.update()
     canvas2.get_tk_widget().pack(side=TOP, fill=BOTH)
 
-
 def get_Pie_Chart_B():
     fig = Figure(figsize=(6, 6), dpi=100)
     plot4 = fig.add_subplot(111)
@@ -118,38 +131,57 @@ def get_Pie_Chart_B():
     #toolbar.update()
     canvas2.get_tk_widget().pack(side=TOP, fill=BOTH)
 
-
-def resultA():
-    global tAdata
-    tAdata = [tAOver1.get(), tAOver2.get(), tAOver3.get(), tAOver4.get(), tAOver5.get(), tAOver6.get(), tAOver7.get(), tAOver8.get(), tAOver9.get(), tAOver10.get()]
-    tATotal.set(sum(tAdata))
-
-def resultB():
-    global tBdata
-    tBdata = [tBOver1.get(), tBOver2.get(), tBOver3.get(), tBOver4.get(), tBOver5.get(), tBOver6.get(), tBOver7.get(), tBOver8.get(), tBOver9.get(), tBOver10.get()]
-    tBTotal.set(sum(tBdata))
-
-def getWinner():
-    if tATotal.get() > tBTotal.get():
-        winner.set("Team A")
-    elif tATotal.get() == tBTotal.get():
-        winner.set("Tie")
-    else:
-        winner.set("Team B")
-
 def getResult():
-    tAdata = [tAOver1.get(), tAOver2.get(), tAOver3.get(), tAOver4.get(), tAOver5.get(), tAOver6.get(), tAOver7.get(),
-              tAOver8.get(), tAOver9.get(), tAOver10.get()]
-    tATotal.set(sum(tAdata))
-    tBdata = [tBOver1.get(), tBOver2.get(), tBOver3.get(), tBOver4.get(), tBOver5.get(), tBOver6.get(), tBOver7.get(),
-              tBOver8.get(), tBOver9.get(), tBOver10.get()]
-    tBTotal.set(sum(tBdata))
-    if sum(tAdata) > sum(tBdata):
-        winner.set("Team A");
-    elif sum(tBdata) > sum(tAdata):
-        winner.set("Team B");
-    else:
-        winner.set("Tie")
+    try:
+        tAdata = [tAOver1.get(), tAOver2.get(), tAOver3.get(), tAOver4.get(), tAOver5.get(), tAOver6.get(), tAOver7.get(),
+                  tAOver8.get(), tAOver9.get(), tAOver10.get()]
+        tATotal.set(sum(tAdata))
+        tBdata = [tBOver1.get(), tBOver2.get(), tBOver3.get(), tBOver4.get(), tBOver5.get(), tBOver6.get(), tBOver7.get(),
+                  tBOver8.get(), tBOver9.get(), tBOver10.get()]
+        tBTotal.set(sum(tBdata))
+        if sum(tAdata) > sum(tBdata):
+            winner.set("Team A");
+        elif sum(tBdata) > sum(tAdata):
+            winner.set("Team B");
+        else:
+            winner.set("Tie")
+        w = winner.get()
+        a = tATotal.get()
+        b = tBTotal.get()
+
+        global cursor
+        global data
+        query = "Insert into data values ('{}', {}, {})".format(w, a, b)
+        cursor.execute(query)
+        con.commit()
+
+        cursor = con.cursor()
+        query = "select * from data"
+        cursor.execute(query)
+        data = cursor.fetchall()
+
+        countA, countB = 0, 0
+        for stat in data:
+            if 'Team A' in stat:
+                countA += 1
+            elif 'Team B' in stat:
+                countB += 1
+        SA1_lbl['text'] = countA
+        SB1_lbl['text'] = countB
+    except:
+        winner.set("Invalid Input")
+        tAOver1.set(0), tAOver2.set(0), tAOver3.set(0), tAOver4.set(0), tAOver5.set(0), tAOver6.set(0), tAOver7.set(0),
+        tAOver8.set(0), tAOver9.set(0), tAOver10.set(0)
+        tBOver1.set(0), tBOver2.set(0), tBOver3.set(0), tBOver4.set(0), tBOver5.set(0), tBOver6.set(0), tBOver7.set(0),
+        tBOver8.set(0), tBOver9.set(0), tBOver10.set(0)
+
+def clear():
+    cursor = con.cursor()
+    query = "TRUNCATE TABLE data"
+    cursor.execute(query)
+    con.commit()
+    SA1_lbl['text'] = 0
+    SB1_lbl['text'] = 0
 
 F2 = LabelFrame(root, text="Runs Scored Per Over", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F2.place(x=0, y=54, width=380, height=380)
@@ -216,7 +248,6 @@ for over in lst:
     txt = Entry(F2, width=3, textvariable=lst1[r - 1], font=('times new roman', 16, 'bold'), bd=5, relief=GROOVE)
     txt.grid(row=r, column=5, padx=10, pady=10)
 
-
 F3 = LabelFrame(root, text="Double Line Graph", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F3.place(x=751, y=54, width=612, height=322)
 canvas = Canvas(master=F3, width = 600, height = 300)
@@ -234,6 +265,9 @@ B6 = Button(F5, text = "Pie Chart A", command = get_Pie_Chart_A)
 B6.grid(row = 3, column = 0, padx = 5, pady = 5)
 B7 = Button(F5, text = "Pie Chart B", command = get_Pie_Chart_B)
 B7.grid(row = 4, column = 0, padx = 5, pady = 5)
+B8 = Button(F5, text = "Clear Series Data", command = clear)
+B8.grid(row = 5, column = 0, padx = 5, pady = 5)
+
 
 F6 = LabelFrame(root, text="Series Statistics", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F6.place(x=451, y=435, width=300, height=300)
@@ -246,10 +280,10 @@ SA_lbl = Label(F10, text="Team A", font=('times new roman', 16, 'bold'), bg="#00
 SA_lbl.grid(row=0, column=0, padx=40, pady=30, sticky='W')
 SB_lbl = Label(F11, text="Team B", font=('times new roman', 16, 'bold'), bg="#00B2EE", fg="black")
 SB_lbl.grid(row=0, column=0, padx=40, pady=30, sticky='W')
-SB_lbl = Label(F10, text="2", font=('times new roman', 50, 'bold'), bg="#00B2EE", fg="black")
-SB_lbl.grid(row=1, column=0, padx=50, pady=10, sticky='W')
-SB_lbl = Label(F11, text="1", font=('times new roman', 50, 'bold'), bg="#00B2EE", fg="black")
-SB_lbl.grid(row=1, column=0, padx=50, pady=10, sticky='W')
+SA1_lbl = Label(F10, text=countA, font=('times new roman', 50, 'bold'), bg="#00B2EE", fg="black")
+SA1_lbl.grid(row=1, column=0, padx=50, pady=10, sticky='W')
+SB1_lbl = Label(F11, text=countB, font=('times new roman', 50, 'bold'), bg="#00B2EE", fg="black")
+SB1_lbl.grid(row=1, column=0, padx=50, pady=10, sticky='W')
 
 
 F7 = LabelFrame(root, text="Results", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
@@ -257,6 +291,7 @@ F7.place(x=551, y=54, width=200, height=380)
 
 tATotal = StringVar()
 tBTotal = StringVar()
+
 
 RO1_lbl = Label(F7, text="Team A", font=('times new roman', 16, 'bold'), bg="#00B2EE", fg="black")
 RO1_lbl.grid(row=0, column=0, padx=10, pady=10, sticky='W')
@@ -289,6 +324,5 @@ F12 = LabelFrame(root, text="Pie Chart Team B", font=('times new roman', 13, 'bo
 F12.place(x=226, y=435, width=225, height=300)
 canvasPieB = Canvas(master=F12, width = 210, height = 280)
 canvasPieB.pack()
-
 
 root.mainloop()
