@@ -8,7 +8,7 @@ from pandastable import Table, TableModel
 import pygame
 import mysql.connector as c
 
-con = c.connect(host = "localhost", user = "root", passwd = "", database = "seriesstatistics")
+con = c.connect(host = "localhost", user = "root", passwd = "Aditya2003$", database = "seriesstatistics")
 cursor = con.cursor()
 query = "select * from data"
 cursor.execute(query)
@@ -94,43 +94,51 @@ def Gen_Bar_graph():
     canvas1.get_tk_widget().pack(side=TOP, fill=BOTH)
 
 def get_Pie_Chart_A():
-    fig = Figure(figsize=(6, 6), dpi=100)
-    plot3 = fig.add_subplot(111)
+    try:
+        fig = Figure(figsize=(6, 6), dpi=100)
+        plot3 = fig.add_subplot(111)
 
-    y = np.array([tAOver1.get() + tAOver2.get() + tAOver3.get(), tAOver4.get() + tAOver5.get() + tAOver6.get() + tAOver7.get(), tAOver8.get() + tAOver9.get() + tAOver10.get()])
-    mylabels = ["Power\nPlay", "Middle", "Death"]
+        y = np.array([tAOver1.get() + tAOver2.get() + tAOver3.get(), tAOver4.get() + tAOver5.get() + tAOver6.get() + tAOver7.get(), tAOver8.get() + tAOver9.get() + tAOver10.get()])
+        mylabels = ["Power\nPlay", "Middle", "Death"]
 
-    plot3.pie(y, labels=mylabels,startangle = 90, autopct='%.1f%%',
-       wedgeprops={'linewidth': 1.0, 'edgecolor': 'white'})
-    plot3.set_title('Phase Wise Runs')
+        plot3.pie(y, labels=mylabels,startangle = 90, autopct='%.1f%%',
+           wedgeprops={'linewidth': 1.0, 'edgecolor': 'white'})
+        plot3.set_title('Phase Wise Runs')
 
 
-    canvas2 = FigureCanvasTkAgg(fig, master=canvasPieA)
-    canvas2.draw()
-    canvas2.get_tk_widget().pack(padx=2, pady=2)
-    #toolbar = NavigationToolbar2Tk(canvas2, root)
-    #toolbar.update()
-    canvas2.get_tk_widget().pack(side=TOP, fill=BOTH)
+        canvas2 = FigureCanvasTkAgg(fig, master=canvasPieA)
+        canvas2.draw()
+        canvas2.get_tk_widget().pack(padx=2, pady=2)
+        #toolbar = NavigationToolbar2Tk(canvas2, root)
+        #toolbar.update()
+        canvas2.get_tk_widget().pack(side=TOP, fill=BOTH)
+    except:
+        canvasPieA.create_text(100, 210, text = "Atleast 1 Input\nshould be non-zero", font=('calibri', 16, 'bold'), fill='red')
 
 def get_Pie_Chart_B():
-    fig = Figure(figsize=(6, 6), dpi=100)
-    plot4 = fig.add_subplot(111)
+    try:
+        fig = Figure(figsize=(6, 6), dpi=100)
+        plot4 = fig.add_subplot(111)
 
-    y = np.array(
-        [tBOver1.get() + tBOver2.get() + tBOver3.get(), tBOver4.get() + tBOver5.get() + tBOver6.get() + tBOver7.get(),
-         tBOver8.get() + tBOver9.get() + tBOver10.get()])
-    mylabels = ["Power\nPlay", "Middle", "Death"]
+        y = np.array(
+            [tBOver1.get() + tBOver2.get() + tBOver3.get(), tBOver4.get() + tBOver5.get() + tBOver6.get() + tBOver7.get(),
+             tBOver8.get() + tBOver9.get() + tBOver10.get()])
+        mylabels = ["Power\nPlay", "Middle", "Death"]
 
-    plot4.pie(y, labels=mylabels, startangle=90, autopct='%.1f%%',
-              wedgeprops={'linewidth': 1.0, 'edgecolor': 'white'})
-    plot4.set_title('Phase Wise Runs')
+        plot4.pie(y, labels=mylabels, startangle=90, autopct='%.1f%%',
+                  wedgeprops={'linewidth': 1.0, 'edgecolor': 'white'})
+        plot4.set_title('Phase Wise Runs')
 
-    canvas2 = FigureCanvasTkAgg(fig, master=canvasPieB)
-    canvas2.draw()
-    canvas2.get_tk_widget().pack(padx=2, pady=2)
-    #toolbar = NavigationToolbar2Tk(canvas2, root)
-    #toolbar.update()
-    canvas2.get_tk_widget().pack(side=TOP, fill=BOTH)
+        canvas2 = FigureCanvasTkAgg(fig, master=canvasPieB)
+        canvas2.draw()
+        canvas2.get_tk_widget().pack(padx=2, pady=2)
+        #toolbar = NavigationToolbar2Tk(canvas2, root)
+        #toolbar.update()
+        canvas2.get_tk_widget().pack(side=TOP, fill=BOTH)
+    except:
+        canvasPieB.create_text(100, 210, text="Atleast 1 Input\nshould be non-zero", font=('calibri', 16, 'bold'),
+                               fill='red')
+
 
 def getResult():
     try:
@@ -141,9 +149,9 @@ def getResult():
                   tBOver8.get(), tBOver9.get(), tBOver10.get()]
         tBTotal.set(sum(tBdata))
         if sum(tAdata) > sum(tBdata):
-            winner.set("Team A");
+            winner.set("Team A")
         elif sum(tBdata) > sum(tAdata):
-            winner.set("Team B");
+            winner.set("Team B")
         else:
             winner.set("Tie")
         w = winner.get()
@@ -169,7 +177,7 @@ def getResult():
                 countB += 1
         SA1_lbl['text'] = countA
         SB1_lbl['text'] = countB
-        open_win(winner)
+        open_win(winner.get(), sum(tAdata), sum(tBdata))
     except:
         winner.set("Invalid Input")
         tAOver1.set(0), tAOver2.set(0), tAOver3.set(0), tAOver4.set(0), tAOver5.set(0), tAOver6.set(0), tAOver7.set(0),
@@ -185,13 +193,21 @@ def clear():
     SA1_lbl['text'] = 0
     SB1_lbl['text'] = 0
 
-def open_win(winner):
+def open_win(winner, A, B):
    new= Toplevel(root)
    new.geometry("380x340+2+85")
    new.title("Result GIF")
    new.config(bg = "black")
 
-   file = "resized.gif"
+   if(winner == "Team A"):
+       file = "ezgif.com-gif-maker (1).gif"
+       displayString = "Team A won by {} Runs".format(A - B)
+   elif(winner == "Team B"):
+       file = "ezgif.com-gif-maker (2).gif"
+       displayString = "Team B won by {} Runs".format(B - A)
+   else:
+       file = "ezgif.com-gif-maker (3).gif"
+       displayString = "What a Thriller it was!"
 
    info = Image.open(file)
 
@@ -218,11 +234,12 @@ def open_win(winner):
     '''
    gif_label = Label(new, image="")
    gif_label.pack()
-   '''' 
-   start = Button(new, text="start", command=lambda: animation(count))
-   start.pack()
-   '''
+
    animation(count)
+
+   resultLabel = Button(new, text=displayString, width = 80, height = 20, font=('times new roman', 16, 'bold'), bg="#00B2EE", fg="black")
+   resultLabel.pack()
+
    '''
    stop = Button(new, text="stop", command=stop_animation)
    stop.pack()
@@ -295,24 +312,24 @@ for over in lst:
 
 F3 = LabelFrame(root, text="Double Line Graph", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F3.place(x=751, y=54, width=612, height=322)
-canvas = Canvas(master=F3, width = 600, height = 300)
+canvas = Canvas(master=F3, width = 600, height = 300, bg = "#00B2EE")
+canvas.create_text(300, 130, text = "Shows\nInnings Progression\nof Team A & Team B\nthrough the course\n of 10 Overs", font = ('calibri', 20, 'bold'))
 canvas.pack()
 
 F5 = LabelFrame(root, text="Buttons", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
-F5.place(x=381, y=54, width=170, height=380)
-B1 = Button(F5, text = "Generate Double Line Graph", command = Gen_Line_graph)
-B1.grid(row = 0, column = 0, padx = 5, pady = 5)
-B2 = Button(F5, text = "Generate Bar Graph", command = Gen_Bar_graph)
-B2.grid(row = 1, column = 0, padx = 5, pady = 5)
-B5 = Button(F5, text = "Get Winner", command = getResult)
-B5.grid(row = 2, column = 0, padx = 5, pady = 5)
-B6 = Button(F5, text = "Pie Chart A", command = get_Pie_Chart_A)
-B6.grid(row = 3, column = 0, padx = 5, pady = 5)
-B7 = Button(F5, text = "Pie Chart B", command = get_Pie_Chart_B)
-B7.grid(row = 4, column = 0, padx = 5, pady = 5)
-B8 = Button(F5, text = "Clear Series Data", command = clear)
-B8.grid(row = 5, column = 0, padx = 5, pady = 5)
-
+F5.place(x=381, y=54, width=180, height=380)
+B1 = Button(F5, text = "Generate\nDouble Line Graph",bg = "#2F2F4F", fg = "#fff", font = 2, command = Gen_Line_graph)
+B1.grid(row = 1, column = 2, padx = 5, pady = 5)
+B2 = Button(F5, text = "Generate\nDouble Bar Graph",bg = "#2F2F4F", fg = "#fff", font = 2, command = Gen_Bar_graph)
+B2.grid(row = 2, column = 2, padx = 5, pady = 5)
+B5 = Button(F5, text = "Get Winner", font = 2,bg = "#2F2F4F", fg = "#fff", command = getResult)
+B5.grid(row = 0, column = 2, padx = 5, pady = 5)
+B6 = Button(F5, text = "Generate Pie Chart\nfor Team A",bg = "#2F2F4F", fg = "#fff", font = 2, command = get_Pie_Chart_A)
+B6.grid(row = 3, column = 2, padx = 5, pady = 5)
+B7 = Button(F5, text = "Generate Pie Chart\nfor Team B",bg = "#2F2F4F", fg = "#fff", font = 2, command = get_Pie_Chart_B)
+B7.grid(row = 4, column = 2, padx = 5, pady = 5)
+B8 = Button(F5, text = "Clear Series Data", font = 2,bg = "#2F2F4F", fg = "#fff", command = clear)
+B8.grid(row = 5, column = 2, padx = 5, pady = 5)
 
 F6 = LabelFrame(root, text="Series Statistics", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F6.place(x=451, y=435, width=300, height=300)
@@ -330,13 +347,11 @@ SA1_lbl.grid(row=1, column=0, padx=50, pady=10, sticky='W')
 SB1_lbl = Label(F11, text=countB, font=('times new roman', 50, 'bold'), bg="#00B2EE", fg="black")
 SB1_lbl.grid(row=1, column=0, padx=50, pady=10, sticky='W')
 
-
 F7 = LabelFrame(root, text="Results", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F7.place(x=551, y=54, width=200, height=380)
 
 tATotal = StringVar()
 tBTotal = StringVar()
-
 
 RO1_lbl = Label(F7, text="Team A", font=('times new roman', 16, 'bold'), bg="#00B2EE", fg="black")
 RO1_lbl.grid(row=0, column=0, padx=10, pady=10, sticky='W')
@@ -357,17 +372,20 @@ R03_txt.grid(row=5, column=0, padx=10, pady=10)
 
 F8 = LabelFrame(root, text="Double-Bar-Graph", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F8.place(x=751, y=376, width=612, height=322)
-canvasNew = Canvas(master=F8, width = 600, height = 300)
+canvasNew = Canvas(master=F8, width = 600, height = 300, bg = "#00B2EE")
+canvasNew.create_text(300, 130, text = "Shows Over Wise\nRuns Comparision\nBetween\nTeam A & Team B", font = ('calibri', 20, 'bold'))
 canvasNew.pack()
 
 F4 = LabelFrame(root, text="Pie Chart Team A", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F4.place(x=0, y=435, width=225, height=300)
-canvasPieA = Canvas(master=F4, width = 210, height = 280)
+canvasPieA = Canvas(master=F4, width = 210, height = 280, bg = "#00B2EE")
+canvasPieA.create_text(100, 100,text = "Shows\nPercentage of Runs\nScored by Team A\nacross the 3 phases\n1.Powerplay\n2.Middle Overs\n3.Death Overs", font=('calibri', 16, 'bold'))
 canvasPieA.pack()
 
 F12 = LabelFrame(root, text="Pie Chart Team B", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F12.place(x=226, y=435, width=225, height=300)
-canvasPieB = Canvas(master=F12, width = 210, height = 280)
+canvasPieB = Canvas(master=F12, width = 210, height = 280, bg = "#00B2EE")
+canvasPieB.create_text(100, 100,text = "Shows\nPercentage of Runs\nScored by Team B\nacross the 3 phases\n1.Powerplay\n2.Middle Overs\n3.Death Overs", font=('calibri', 16, 'bold'))
 canvasPieB.pack()
 
 root.mainloop()
