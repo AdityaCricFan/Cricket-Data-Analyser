@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib.figure import Figure
 import pandas as pd
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+from PIL import ImageTk, Image
 from pandastable import Table, TableModel
 import pygame
 import mysql.connector as c
@@ -168,6 +169,7 @@ def getResult():
                 countB += 1
         SA1_lbl['text'] = countA
         SB1_lbl['text'] = countB
+        open_win(winner)
     except:
         winner.set("Invalid Input")
         tAOver1.set(0), tAOver2.set(0), tAOver3.set(0), tAOver4.set(0), tAOver5.set(0), tAOver6.set(0), tAOver7.set(0),
@@ -182,6 +184,49 @@ def clear():
     con.commit()
     SA1_lbl['text'] = 0
     SB1_lbl['text'] = 0
+
+def open_win(winner):
+   new= Toplevel(root)
+   new.geometry("380x340+2+85")
+   new.title("Result GIF")
+   new.config(bg = "black")
+
+   file = "resized.gif"
+
+   info = Image.open(file)
+
+   frames = info.n_frames  # gives total number of frames that gif contains
+
+   # creating list of PhotoImage objects for each frames
+   im = [PhotoImage(file=file, format=f"gif -index {i}") for i in range(frames)]
+
+   count = 0
+   anim = None
+
+   def animation(count):
+       global anim
+       im2 = im[count]
+
+       gif_label.configure(image=im2)
+       count += 1
+       if count == frames:
+           count = 0
+       anim = new.after(50, lambda: animation(count))
+
+   '''def stop_animation():
+       new.after_cancel(anim)
+    '''
+   gif_label = Label(new, image="")
+   gif_label.pack()
+   '''' 
+   start = Button(new, text="start", command=lambda: animation(count))
+   start.pack()
+   '''
+   animation(count)
+   '''
+   stop = Button(new, text="stop", command=stop_animation)
+   stop.pack()
+   '''
 
 F2 = LabelFrame(root, text="Runs Scored Per Over", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F2.place(x=0, y=54, width=380, height=380)
