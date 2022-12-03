@@ -8,7 +8,7 @@ from pandastable import Table, TableModel
 import pygame
 import mysql.connector as c
 
-con = c.connect(host = "localhost", user = "root", passwd = "Aditya2003$", database = "seriesstatistics")
+con = c.connect(host = "localhost", user = "root", passwd = "", database = "seriesstatistics")
 cursor = con.cursor()
 query = "select * from data"
 cursor.execute(query)
