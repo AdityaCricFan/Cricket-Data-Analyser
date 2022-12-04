@@ -1,4 +1,6 @@
+import tkinter.messagebox
 from tkinter import *
+from tkinter import messagebox
 import numpy as np
 from matplotlib.figure import Figure
 import pandas as pd
@@ -57,6 +59,8 @@ def Gen_Line_graph():
 
     plot1.plot(overNo, teamA_runs_upto_this_point, label='Team A', marker='o', markerfacecolor='green')
     plot1.plot(overNo, teamB_runs_upto_this_point, label='Team B', marker='o', markerfacecolor='green')
+
+    plot1.set_ylabel("Runs")
     plot1.set_title('Innings Progression')
     plot1.legend()
 
@@ -113,7 +117,8 @@ def get_Pie_Chart_A():
         #toolbar.update()
         canvas2.get_tk_widget().pack(side=TOP, fill=BOTH)
     except:
-        canvasPieA.create_text(100, 210, text = "Atleast 1 Input\nshould be non-zero", font=('calibri', 16, 'bold'), fill='red')
+        #canvasPieA.create_text(100, 210, text = "Atleast 1 Input\nshould be non-zero", font=('calibri', 16, 'bold'), fill='red')
+        tkinter.messagebox.showerror("Invalid Input", "Atleast 1 Input should be Non-Zero to obtain Pie Chart")
 
 def get_Pie_Chart_B():
     try:
@@ -136,8 +141,9 @@ def get_Pie_Chart_B():
         #toolbar.update()
         canvas2.get_tk_widget().pack(side=TOP, fill=BOTH)
     except:
-        canvasPieB.create_text(100, 210, text="Atleast 1 Input\nshould be non-zero", font=('calibri', 16, 'bold'),
-                               fill='red')
+        #canvasPieB.create_text(100, 210, text="Atleast 1 Input\nshould be non-zero", font=('calibri', 16, 'bold'),
+                               #fill='red')
+        tkinter.messagebox.showerror("Invalid Input", "Atleast 1 Input should be Non-Zero to obtain Pie Chart")
 
 
 def getResult():
@@ -192,6 +198,17 @@ def clear():
     con.commit()
     SA1_lbl['text'] = 0
     SB1_lbl['text'] = 0
+
+def askSubmitConfirmation():
+    isTrue = tkinter.messagebox.askyesno("Seeking Confimation", "Are you sure that you want to Submit the data")
+    if(isTrue):
+        getResult()
+
+def askClearConfirmation():
+    isTrue = tkinter.messagebox.askyesno("Seeking Confimation", "Do you really want to clear series data?\nOnce cleared it cannot be restored")
+    if(isTrue):
+        clear()
+
 
 def open_win(winner, A, B):
    new= Toplevel(root)
@@ -322,13 +339,13 @@ B1 = Button(F5, text = "Generate\nDouble Line Graph",bg = "#2F2F4F", fg = "#fff"
 B1.grid(row = 1, column = 2, padx = 5, pady = 5)
 B2 = Button(F5, text = "Generate\nDouble Bar Graph",bg = "#2F2F4F", fg = "#fff", font = 2, command = Gen_Bar_graph)
 B2.grid(row = 2, column = 2, padx = 5, pady = 5)
-B5 = Button(F5, text = "Get Winner", font = 2,bg = "#2F2F4F", fg = "#fff", command = getResult)
+B5 = Button(F5, text = "Get Winner", font = 2,bg = "#2F2F4F", fg = "#fff", command = askSubmitConfirmation)
 B5.grid(row = 0, column = 2, padx = 5, pady = 5)
 B6 = Button(F5, text = "Generate Pie Chart\nfor Team A",bg = "#2F2F4F", fg = "#fff", font = 2, command = get_Pie_Chart_A)
 B6.grid(row = 3, column = 2, padx = 5, pady = 5)
 B7 = Button(F5, text = "Generate Pie Chart\nfor Team B",bg = "#2F2F4F", fg = "#fff", font = 2, command = get_Pie_Chart_B)
 B7.grid(row = 4, column = 2, padx = 5, pady = 5)
-B8 = Button(F5, text = "Clear Series Data", font = 2,bg = "#2F2F4F", fg = "#fff", command = clear)
+B8 = Button(F5, text = "Clear Series Data", font = 2,bg = "#2F2F4F", fg = "#fff", command = askClearConfirmation)
 B8.grid(row = 5, column = 2, padx = 5, pady = 5)
 
 F6 = LabelFrame(root, text="Series Statistics", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
