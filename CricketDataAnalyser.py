@@ -298,11 +298,11 @@ for over in lst:
     r += 1
     lbl = Label(F2, text=str(r), font=('times new roman', 16, 'bold'), bg="#00B2EE", fg="black")
     lbl.grid(row=r, column=0, padx=10, pady=10, sticky='W')
-    txt = Entry(F2, width=3, textvariable=over, font=('times new roman', 16, 'bold'), bd=5, relief=GROOVE)
+    txt = Entry(F2, width=3, textvariable=over, font=('times new roman', 16, 'bold'), bd=5, relief=GROOVE, justify=CENTER)
     txt.grid(row=r, column=1, padx=10, pady=10)
     lbl = Label(F2, text=str(r + 5), font=('times new roman', 16, 'bold'), bg="#00B2EE", fg="black")
     lbl.grid(row=r, column=3, padx=10, pady=10, sticky='W')
-    txt = Entry(F2, width=3, textvariable=lst1[r - 1], font=('times new roman', 16, 'bold'), bd=5, relief=GROOVE)
+    txt = Entry(F2, width=3, textvariable=lst1[r - 1], font=('times new roman', 16, 'bold'), bd=5, relief=GROOVE, justify=CENTER)
     txt.grid(row=r, column=4, padx=10, pady=10)
 
 tBOver1 = IntVar()
@@ -322,15 +322,17 @@ r = 0
 
 for over in lst:
     r += 1
-    txt = Entry(F2, width=3, textvariable=over, font=('times new roman', 16, 'bold'), bd=5, relief=GROOVE)
+    txt = Entry(F2, width=3, textvariable=over, font=('times new roman', 16, 'bold'), bd=5, relief=GROOVE, justify=CENTER)
     txt.grid(row=r, column=2, padx=10, pady=10)
-    txt = Entry(F2, width=3, textvariable=lst1[r - 1], font=('times new roman', 16, 'bold'), bd=5, relief=GROOVE)
+    txt = Entry(F2, width=3, textvariable=lst1[r - 1], font=('times new roman', 16, 'bold'), bd=5, relief=GROOVE, justify=CENTER)
     txt.grid(row=r, column=5, padx=10, pady=10)
 
 F3 = LabelFrame(root, text="Double Line Graph", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F3.place(x=751, y=54, width=612, height=322)
 canvas = Canvas(master=F3, width = 600, height = 300, bg = "#00B2EE")
 canvas.create_text(300, 130, text = "Shows\nInnings Progression\nof Team A & Team B\nthrough the course\n of 10 Overs", font = ('calibri', 20, 'bold'))
+img = ImageTk.PhotoImage(Image.open("C:\\Users\\Lenovo\\PycharmProjects\\pythonProject\\PDL\\Image1.gif").resize((595, 295), Image.ANTIALIAS))
+canvas.create_image(10,10,anchor=NW,image=img)
 canvas.pack()
 
 F5 = LabelFrame(root, text="Buttons", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
@@ -372,37 +374,44 @@ tBTotal = StringVar()
 
 RO1_lbl = Label(F7, text="Team A", font=('times new roman', 16, 'bold'), bg="#00B2EE", fg="black")
 RO1_lbl.grid(row=0, column=0, padx=10, pady=10, sticky='W')
-R01_txt = Label(F7, width=10, textvariable=tATotal, font=('times new roman', 16, 'bold'), bd=5, relief=GROOVE)
+R01_txt = Label(F7, width=10, textvariable=tATotal, font=('times new roman', 16, 'bold'), bg = "white", fg = "black", bd=5, relief=GROOVE, justify=CENTER)
 R01_txt.grid(row=1, column=0, padx=10, pady=10)
 
 RO2_lbl = Label(F7, text="Team B", font=('times new roman', 16, 'bold'), bg="#00B2EE", fg="black")
 RO2_lbl.grid(row=2, column=0, padx=10, pady=10, sticky='W')
-R02_txt = Label(F7, width=10, textvariable=tBTotal, font=('times new roman', 16, 'bold'), bd=5, relief=GROOVE)
+R02_txt = Label(F7, width=10, textvariable=tBTotal, font=('times new roman', 16, 'bold'), bg = "white", fg = "black", bd=5, relief=GROOVE)
 R02_txt.grid(row=3, column=0, padx=10, pady=10)
 
 winner = StringVar()
 
 RO3_lbl = Label(F7, text="Winner", font=('times new roman', 20, 'bold'), bg="#00B2EE", fg="black")
 RO3_lbl.grid(row=4, column=0, padx=10, pady=10, sticky='W')
-R03_txt = Label(F7, width=10, textvariable=winner, font=('times new roman', 20, 'bold'), bd=5, relief=GROOVE)
+R03_txt = Label(F7, width=9, textvariable=winner, font=('times new roman', 20, 'bold'), bg = "white", fg = "black",bd=5, relief=GROOVE)
+
 R03_txt.grid(row=5, column=0, padx=10, pady=10)
 
 F8 = LabelFrame(root, text="Double-Bar-Graph", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F8.place(x=751, y=376, width=612, height=322)
 canvasNew = Canvas(master=F8, width = 600, height = 300, bg = "#00B2EE")
 canvasNew.create_text(300, 130, text = "Shows Over Wise\nRuns Comparision\nBetween\nTeam A & Team B", font = ('calibri', 20, 'bold'))
+img2 = ImageTk.PhotoImage(Image.open("C:\\Users\\Lenovo\\PycharmProjects\\pythonProject\\PDL\\Image2.gif").resize((595, 295), Image.ANTIALIAS))
+canvasNew.create_image(10,10,anchor=NW,image=img2)
 canvasNew.pack()
 
 F4 = LabelFrame(root, text="Pie Chart Team A", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F4.place(x=0, y=435, width=225, height=300)
 canvasPieA = Canvas(master=F4, width = 210, height = 280, bg = "#00B2EE")
 canvasPieA.create_text(100, 100,text = "Shows\nPercentage of Runs\nScored by Team A\nacross the 3 phases\n1.Powerplay\n2.Middle Overs\n3.Death Overs", font=('calibri', 16, 'bold'))
+img3 = ImageTk.PhotoImage(Image.open("C:\\Users\\Lenovo\\PycharmProjects\\pythonProject\\PDL\\Image3.gif").resize((205, 235), Image.ANTIALIAS))
+canvasPieA.create_image(10,10,anchor=NW,image=img3)
 canvasPieA.pack()
 
 F12 = LabelFrame(root, text="Pie Chart Team B", font=('times new roman', 13, 'bold'), bd=10, fg="Black", bg="#00B2EE")
 F12.place(x=226, y=435, width=225, height=300)
 canvasPieB = Canvas(master=F12, width = 210, height = 280, bg = "#00B2EE")
 canvasPieB.create_text(100, 100,text = "Shows\nPercentage of Runs\nScored by Team B\nacross the 3 phases\n1.Powerplay\n2.Middle Overs\n3.Death Overs", font=('calibri', 16, 'bold'))
+img4 = ImageTk.PhotoImage(Image.open("C:\\Users\\Lenovo\\PycharmProjects\\pythonProject\\PDL\\Image4.gif").resize((205, 235), Image.ANTIALIAS))
+canvasPieB.create_image(10,10,anchor=NW,image=img4)
 canvasPieB.pack()
 
 root.mainloop()
